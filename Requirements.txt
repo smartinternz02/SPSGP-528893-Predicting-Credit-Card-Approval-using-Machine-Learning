@@ -1,0 +1,30 @@
+ feature_name=["CODE_GENDER","FLAG_OWN_CAR","FLAG_OWN_REALTY","AMT_INCOME_TOTAL","NAME_INCOME_TYPE","NAME_EDUCATION_TYPE","NAME_FAMILY_STATUS","NAME_HOUSING_TYPE","DAYS_BIRTH","DAYS_EMPLOYED","CNT_FAM_MEMBERS","paid_off","#_of_pastdues","no_loan"]
+    
+    payload_scoring = {"input_data":[{"fields":feature_name,"values":[input_feature]}]}
+
+# NOTE: manually define and pass the array(s) of values to be scored in the next line
+
+    response_scoring = requests.post('https://us-south.ml.cloud.ibm.com/ml/v4/deployments/61764cb9-377a-4bc2-b88b-0220de0c551f/predictions?version=2021-12-13', json=payload_scoring, headers={'Authorization': 'Bearer ' + mltoken})
+    
+    print("Scoring response")
+    pred= response_scoring.json()
+    print(pred)
+    
+    output = pred['predictions'][0]['values'][0][0]
+    print(output)
+    
+    if output==0:
+        prediction = "Eligible"
+    else:
+        prediction = "Not Eligible"
+    
+    
+    #prediction="Prediction is:"+str(predic)
+    
+     # showing the prediction results in a UI
+    return render_template("result.html",prediction=prediction[0:])
+if _name=="__main_":
+    
+    # app.run(host='0.0.0.0', port=8000,debug=True)    # running the app
+    port=int(os.environ.get('PORT',5000))
+    app.run(port=port,debug=False,use_reloader=False)
